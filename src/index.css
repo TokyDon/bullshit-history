@@ -1,0 +1,83 @@
+:root {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+
+  color: #333;
+  background-color: #ffffff;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  user-select: none;
+}
+
+input, select {
+  font-family: inherit;
+}
+
+/* Mobile-first optimizations */
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+  
+  body {
+    background: #ffffff;
+  }
+}
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Hide scrollbar but keep functionality */
+.events-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.events-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.events-list::-webkit-scrollbar-thumb {
+  background: #4ecdc4;
+  border-radius: 10px;
+}
+
+.events-list::-webkit-scrollbar-thumb:hover {
+  background: #3dbdb5;
+}
