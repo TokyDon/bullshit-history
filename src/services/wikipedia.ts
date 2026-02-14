@@ -324,6 +324,11 @@ function isHistoricalEvent(text: string, categories?: any[]): boolean {
     /\bis a (\d{4}) (book|novel|film|movie|album|video game)\b/i,
     /\bwas released (in|on)\b/i,
     /\bwas published (in|on)\b/i,
+    // Incidents, controversies, scandals
+    /\b(controversy|scandal|incident|affair)\b/i,
+    /\b(protest|demonstration|riot)\b/i,
+    /\b(trial|lawsuit|court case)\b/i,
+    /\b(performance|concert|show|ceremony|event)\b/i,
   ];
 
   for (const pattern of eventPatterns) {
