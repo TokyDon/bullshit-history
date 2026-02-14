@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useGame } from '../context/GameContext';
-import { validateEvent } from '../services/wikipedia';
+import { validateEventWithOptions } from '../services/wikipedia';
 import type { HistoricalEvent } from '../types/game';
 import './Game.css';
 
@@ -19,7 +19,7 @@ export function Game() {
   const { gameState, submitEvent, callBullshit, resetGame } = useGame();
   const [eventInput, setEventInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [pendingEvent, setPendingEvent] = useState<HistoricalEvent | null>(null);
+  const [pendingEvents, setPendingEvents] = useState<HistoricalEvent[]>([]);
   const [showBullshitDialog, setShowBullshitDialog] = useState(false);
 
   if (!gameState) return null;
@@ -44,38 +44,36 @@ export function Game() {
       return;
     }
     
-    // First, validate the event
-    const validatedEvent = await validateEvent(input);
+    // Get up to 3 event options
+    const eventOptions = await validateEventWithOptions(input);
     
-    if (!validatedEvent) {
+    if (eventOptions.length === 0) {
       setIsSubmitting(false);
       alert('Event not found in Wikipedia. Try being more specific!');
       return;
     }
 
-    // Show confirmation dialog
-    setPendingEvent(validatedEvent);
+    // Show confirmation dialog with options
+    setPendingEvents(eventOptions);
     setIsSubmitting(false);
   };
 
-  const handleConfirmEvent = async () => {
-    if (!pendingEvent) return;
-
+  const handleConfirmEvent = async (selectedEvent: HistoricalEvent) => {
     setIsSubmitting(true);
-    const result = await submitEvent(pendingEvent);
+    const result = await submitEvent(selectedEvent);
     setIsSubmitting(false);
 
     if (result.success) {
       setEventInput('');
-      setPendingEvent(null);
+      setPendingEvents([]);
     } else {
       alert(result.message);
-      setPendingEvent(null);
+      setPendingEvents([]);
     }
   };
 
   const handleCancelEvent = () => {
-    setPendingEvent(null);
+    setPendingEvents([]);
     // Keep the input so they can try again
   };
 
@@ -118,28 +116,34 @@ export function Game() {
         </div>
       </div>
 
-      {pendingEvent && (
+      {pendingEvents.length > 0 && (
         <div className="confirmation-overlay">
           <div className="confirmation-dialog">
-            <h3>Is this the event you meant?</h3>
-            <div className="confirmation-content">
-              <p className="confirmation-title">{pendingEvent.title}</p>
+            <h3>Which event did you mean?</h3>
+            <p className="confirmation-hint">Select the closest match:</p>
+            <div className="confirmation-options">
+              {pendingEvents.map((event, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleConfirmEvent(event)}
+                  className="event-option"
+                  disabled={isSubmitting}
+                >
+                  <div className="event-option-rank">{index + 1}</div>
+                  <div className="event-option-content">
+                    <p className="event-option-title">{event.title}</p>
+                    <p className="event-option-date">{formatEventDate(event)}</p>
+                  </div>
+                </button>
+              ))}
             </div>
-            <div className="confirmation-buttons">
-              <button
-                onClick={handleConfirmEvent}
-                className="btn btn-primary"
-                disabled={isSubmitting}
-              >
-                ✓ Yes, Submit This
-              </button>
-              <button
-                onClick={handleCancelEvent}
-                className="btn btn-secondary"
-              >
-                ✗ No, Try Again
-              </button>
-            </div>
+            <button
+              onClick={handleCancelEvent}
+              className="btn btn-secondary"
+              style={{ marginTop: '1rem' }}
+            >
+              ✗ None of these - Try Again
+            </button>
           </div>
         </div>
       )}

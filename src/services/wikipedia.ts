@@ -609,6 +609,40 @@ export async function validateEvent(
 }
 
 /**
+ * Validate an event and return up to 3 options for user to choose from
+ */
+export async function validateEventWithOptions(
+  eventName: string
+): Promise<HistoricalEvent[]> {
+  // Search for the event
+  const results = await searchWikipediaEvents(eventName, 10);
+  
+  if (results.length === 0) {
+    return [];
+  }
+
+  const validEvents: HistoricalEvent[] = [];
+  const maxOptions = 3;
+
+  // Try to get details for each result, collect up to 3 valid events
+  for (const result of results) {
+    if (validEvents.length >= maxOptions) break;
+    
+    // Skip time period pages and meta content
+    if (isTimePeriodOrMetaPage(result.title)) {
+      continue;
+    }
+    
+    const details = await getEventDetails(result.title);
+    if (details) {
+      validEvents.push(details);
+    }
+  }
+
+  return validEvents;
+}
+
+/**
  * Fetch a starting event from a specific century
  * Searches for notable events from that era and returns a random one
  */

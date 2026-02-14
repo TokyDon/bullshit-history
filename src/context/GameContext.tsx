@@ -5,7 +5,6 @@ import { DEFAULT_SETTINGS } from '../types/game';
 import { fetchStartingEvent } from '../services/wikipedia';
 import {
   calculateBuffer,
-  getCurrentYear,
   processBullshitCall,
   isGameOver,
 } from '../utils/gameLogic';
@@ -144,14 +143,20 @@ export function GameProvider({ children }: GameProviderProps) {
     // Use the already-validated event (no need to validate again)
     const validatedEvent = event;
 
-    // Check if event is chronologically correct (must be after or equal to start)
-    const currentYear = getCurrentYear(gameState);
-    if (validatedEvent.year < currentYear) {
+    // Check if this event has already been submitted
+    const isDuplicate = gameState.eventChain.some(
+      (gameEvent) => gameEvent.event.title.toLowerCase() === validatedEvent.title.toLowerCase()
+    );
+
+    if (isDuplicate) {
       return {
         success: false,
-        message: `Event must be from year ${currentYear} or later!`,
+        message: 'This event has already been submitted! Try a different one.',
       };
     }
+
+    // Allow any year - other players can call BS if it's wrong
+    // No year validation needed here
 
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
