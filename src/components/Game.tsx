@@ -132,7 +132,6 @@ export function Game() {
                   <div className="event-option-rank">{index + 1}</div>
                   <div className="event-option-content">
                     <p className="event-option-title">{event.title}</p>
-                    <p className="event-option-date">{formatEventDate(event)}</p>
                   </div>
                 </button>
               ))}
