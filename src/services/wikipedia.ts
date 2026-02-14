@@ -1,5 +1,7 @@
 import axios from 'axios';
 import type { HistoricalEvent } from '../types/game';
+import { searchHistoricalEvent, searchHistoricalEventOptions, getStartingEventFromCentury } from './wikidata';
+import { getCachedEvent, cacheEvent, cacheEvents } from './eventCache';
 
 const WIKIPEDIA_API = 'https://en.wikipedia.org/w/api.php';
 
@@ -590,7 +592,25 @@ function isValidCompleteDate(year: number, month: number, day: number): boolean 
 export async function validateEvent(
   eventName: string
 ): Promise<HistoricalEvent | null> {
-  // First search for the event - search more results for user submissions
+  // 1. Check cache first
+  const cached = getCachedEvent(eventName);
+  if (cached) {
+    return cached;
+  }
+
+  // 2. Try Wikidata (structured, accurate)
+  try {
+    const wikidataResult = await searchHistoricalEvent(eventName);
+    if (wikidataResult) {
+      // Cache the result
+      cacheEvent(eventName, wikidataResult);
+      return wikidataResult;
+    }
+  } catch (error) {
+    console.warn('Wikidata search failed, falling back to Wikipedia:', error);
+  }
+
+  // 3. Fall back to Wikipedia text parsing
   const results = await searchWikipediaEvents(eventName, 10);
   
   if (results.length === 0) {
@@ -606,6 +626,8 @@ export async function validateEvent(
     
     const details = await getEventDetails(result.title);
     if (details) {
+      // Cache the result
+      cacheEvent(eventName, details);
       return details;
     }
   }
@@ -619,7 +641,23 @@ export async function validateEvent(
 export async function validateEventWithOptions(
   eventName: string
 ): Promise<HistoricalEvent[]> {
-  // Search for the event
+  // 1. Try Wikidata first (best for multiple options)
+  try {
+    const wikidataResults = await searchHistoricalEventOptions(eventName);
+    if (wikidataResults.length > 0) {
+      // Cache all results
+      const toCache = wikidataResults.map(event => ({
+        name: event.title,
+        event,
+      }));
+      cacheEvents(toCache);
+      return wikidataResults;
+    }
+  } catch (error) {
+    console.warn('Wikidata search failed, falling back to Wikipedia:', error);
+  }
+
+  // 2. Fall back to Wikipedia text parsing
   const results = await searchWikipediaEvents(eventName, 10);
   
   if (results.length === 0) {
@@ -644,6 +682,15 @@ export async function validateEventWithOptions(
     }
   }
 
+  // Cache all found events
+  if (validEvents.length > 0) {
+    const toCache = validEvents.map(event => ({
+      name: event.title,
+      event,
+    }));
+    cacheEvents(toCache);
+  }
+
   return validEvents;
 }
 
@@ -654,6 +701,17 @@ export async function validateEventWithOptions(
 export async function fetchStartingEvent(
   century: number
 ): Promise<HistoricalEvent | null> {
+  // Try Wikidata first
+  try {
+    const wikidataResult = await getStartingEventFromCentury(century);
+    if (wikidataResult) {
+      return wikidataResult;
+    }
+  } catch (error) {
+    console.warn('Wikidata starting event fetch failed, falling back to Wikipedia:', error);
+  }
+
+  // Fall back to Wikipedia
   // Convert century to year range (e.g., 12th century = 1100-1199, 21st century = 2000-2099)
   const startYear = (century - 1) * 100;
   const midYear = startYear + 50;
