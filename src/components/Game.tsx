@@ -109,7 +109,7 @@ export function Game() {
         <button onClick={handleExitGame} className="btn-back" title="Exit Game">
           <span className="material-icons">chevron_left</span>
         </button>
-        <div className="game-code">{gameState.gameId} · {alivePlayers.length} {alivePlayers.length === 1 ? 'Player' : 'Players'}</div>
+        <div className="game-header-text">{gameState.gameId} · {alivePlayers.length} {alivePlayers.length === 1 ? 'Player' : 'Players'}</div>
       </div>
       
       <div className="game">
