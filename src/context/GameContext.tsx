@@ -113,7 +113,7 @@ export function GameProvider({ children }: GameProviderProps) {
     // Create the initial game event (marked as checked and correct)
     const initialGameEvent: GameEvent = {
       playerId: 'system',
-      playerName: 'Game',
+      playerName: 'Starting Event',
       event: startingEvent,
       wasChecked: true,
       wasCorrect: true,
