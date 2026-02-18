@@ -104,13 +104,15 @@ export function Game() {
   const canCallBullshit = lastEvent && !lastEvent.wasChecked && gameState.eventChain.length > 1;
 
   return (
-    <div className="game">
+    <>
       <div className="game-header">
         <button onClick={handleExitGame} className="btn-back" title="Exit Game">
-          ←
+          <span className="material-icons">chevron_left</span>
         </button>
         <span className="game-code">{gameState.gameId} · {alivePlayers.length} {alivePlayers.length === 1 ? 'Player' : 'Players'}</span>
       </div>
+      
+      <div className="game">
 
       {pendingEvents.length > 0 && (
         <div className="confirmation-overlay">
@@ -269,5 +271,6 @@ export function Game() {
         </div>
       </div>
     </div>
+    </>
   );
 }
