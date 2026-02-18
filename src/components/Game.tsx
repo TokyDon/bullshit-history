@@ -105,11 +105,11 @@ export function Game() {
 
   return (
     <>
-      <div className="game-header">
+      <div className="game-header" key="game-nav-header">
         <button onClick={handleExitGame} className="btn-back" title="Exit Game">
           <span className="material-icons">chevron_left</span>
         </button>
-        <span className="game-code">{gameState.gameId} · {alivePlayers.length} {alivePlayers.length === 1 ? 'Player' : 'Players'}</span>
+        <div className="game-code">{gameState.gameId} · {alivePlayers.length} {alivePlayers.length === 1 ? 'Player' : 'Players'}</div>
       </div>
       
       <div className="game">
