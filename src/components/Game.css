@@ -42,8 +42,7 @@
 }
 
 .btn-back {
-  background: rgba(245, 245, 245, 1);
-  color: rgba(0, 0, 0, 0.87);
+  background: rgba(0, 0, 0, 0.38);
   border: none;
   border-radius: 50%;
   width: 32px;
@@ -64,7 +63,7 @@
 .btn-back .material-icons {
   font-size: 24px;
   line-height: 24px;
-  color: rgba(0, 0, 0, 0.87);
+  color: rgba(255, 255, 255, 1);
   display: block;
 }
 
