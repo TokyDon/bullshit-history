@@ -106,14 +106,10 @@ export function Game() {
   return (
     <div className="game">
       <div className="game-header">
-        <div className="game-info">
-          <span className="game-code">Game: {gameState.gameId} · {alivePlayers.length} {alivePlayers.length === 1 ? 'player' : 'players'} left</span>
-        </div>
-        <div className="header-actions">
-          <button onClick={handleExitGame} className="btn-exit" title="Exit Game">
-            ✕
-          </button>
-        </div>
+        <button onClick={handleExitGame} className="btn-back" title="Exit Game">
+          ←
+        </button>
+        <span className="game-code">{gameState.gameId} · {alivePlayers.length} {alivePlayers.length === 1 ? 'Player' : 'Players'}</span>
       </div>
 
       {pendingEvents.length > 0 && (

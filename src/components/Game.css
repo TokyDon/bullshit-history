@@ -6,65 +6,60 @@
 }
 
 .game-header {
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 50%, #f7931e 100%);
+  background: linear-gradient(98.47deg, #ff6d36 0.22%, #f89222 100%);
   color: #ffffff;
-  padding: 16px 24px;
-  border-radius: 16px;
+  padding: 4px 16px;
+  border-radius: 0;
   margin-bottom: 24px;
-  box-shadow: 0 8px 16px rgba(255, 107, 53, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  min-height: 64px;
-}
-
-.game-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1.1rem;
-  font-weight: 700;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  color: #ffffff;
-}
-
-.header-actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
+  gap: 20px;
+  height: 64px;
+  margin-left: -20px;
+  margin-right: -20px;
+  margin-top: -20px;
 }
 
 .game-code {
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  font-size: 1.1rem;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.25px;
+  font-size: 1.25rem;
   color: #ffffff;
+  flex: 1;
+  line-height: 32px;
+  text-shadow: none;
 }
 
-.btn-exit {
-  background: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
-  width: 44px;
-  height: 44px;
-  font-size: 1.3rem;
+.btn-back {
+  background: #f5f5f5;
+  color: rgba(0, 0, 0, 0.87);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 1.25rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: none;
+  flex-shrink: 0;
 }
 
-.btn-exit:hover {
-  background: rgba(255, 255, 255, 0.35);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+.btn-back:hover {
+  background: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.btn-back:active {
+  transform: scale(0.95);
 }
 
 .game-content {
