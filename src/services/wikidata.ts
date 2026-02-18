@@ -30,6 +30,7 @@ interface WikidataEntity {
  */
 async function searchWikidata(query: string, limit: number = 10): Promise<WikidataSearchResult[]> {
   try {
+    console.log('[Wikidata] Searching for:', query);
     const response = await axios.get(WIKIDATA_API, {
       params: {
         action: 'wbsearchentities',
@@ -41,13 +42,16 @@ async function searchWikidata(query: string, limit: number = 10): Promise<Wikida
     });
 
     if (response.data?.search) {
-      return response.data.search.map((item: any) => ({
+      const results = response.data.search.map((item: any) => ({
         id: item.id,
         label: item.label || item.display?.label?.value,
         description: item.description || item.display?.description?.value,
       }));
+      console.log('[Wikidata] Found results:', results.length, results.map((r: any) => r.label));
+      return results;
     }
 
+    console.log('[Wikidata] No results found');
     return [];
   } catch (error) {
     console.error('Wikidata search error:', error);
@@ -251,18 +255,32 @@ async function entityToHistoricalEvent(
   entity: WikidataEntity,
   _entityId: string
 ): Promise<HistoricalEvent | null> {
-  if (!entity.claims) return null;
+  if (!entity.claims) {
+    console.log('[Wikidata] No claims found');
+    return null;
+  }
 
   const dateInfo = extractDate(entity.claims);
-  if (!dateInfo) return null;
+  if (!dateInfo) {
+    console.log('[Wikidata] No date found in claims');
+    return null;
+  }
 
   const types = await getEventTypes(entity.claims);
+  console.log('[Wikidata] Event types:', types);
   
-  if (!isValidEvent(entity, types)) return null;
+  if (!isValidEvent(entity, types)) {
+    console.log('[Wikidata] Event validation failed');
+    return null;
+  }
 
   const title = entity.labels?.en?.value;
-  if (!title) return null;
+  if (!title) {
+    console.log('[Wikidata] No title found');
+    return null;
+  }
 
+  console.log('[Wikidata] Successfully created event:', title, dateInfo);
   return {
     title,
     date: new Date(dateInfo.year, dateInfo.month, dateInfo.day),
@@ -300,9 +318,13 @@ export async function searchHistoricalEvent(
 export async function searchHistoricalEventOptions(
   eventName: string
 ): Promise<HistoricalEvent[]> {
+  console.log('[Wikidata] searchHistoricalEventOptions called with:', eventName);
   const results = await searchWikidata(eventName, 10);
   
-  if (results.length === 0) return [];
+  if (results.length === 0) {
+    console.log('[Wikidata] No search results');
+    return [];
+  }
 
   const events: HistoricalEvent[] = [];
   const maxOptions = 3;
@@ -310,8 +332,12 @@ export async function searchHistoricalEventOptions(
   for (const result of results) {
     if (events.length >= maxOptions) break;
 
+    console.log('[Wikidata] Fetching entity:', result.id, result.label);
     const entity = await getEntityDetails(result.id);
-    if (!entity) continue;
+    if (!entity) {
+      console.log('[Wikidata] Failed to get entity details');
+      continue;
+    }
 
     const event = await entityToHistoricalEvent(entity, result.id);
     if (event) {
@@ -319,6 +345,7 @@ export async function searchHistoricalEventOptions(
     }
   }
 
+  console.log('[Wikidata] Total events found:', events.length);
   return events;
 }
 

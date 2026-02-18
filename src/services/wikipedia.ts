@@ -641,9 +641,13 @@ export async function validateEvent(
 export async function validateEventWithOptions(
   eventName: string
 ): Promise<HistoricalEvent[]> {
+  console.log('[validateEventWithOptions] Called with:', eventName);
+  
   // 1. Try Wikidata first (best for multiple options)
   try {
+    console.log('[validateEventWithOptions] Trying Wikidata...');
     const wikidataResults = await searchHistoricalEventOptions(eventName);
+    console.log('[validateEventWithOptions] Wikidata returned:', wikidataResults.length, 'results');
     if (wikidataResults.length > 0) {
       // Cache all results
       const toCache = wikidataResults.map(event => ({
@@ -657,6 +661,7 @@ export async function validateEventWithOptions(
     console.warn('Wikidata search failed, falling back to Wikipedia:', error);
   }
 
+  console.log('[validateEventWithOptions] Falling back to Wikipedia text parsing...');
   // 2. Fall back to Wikipedia text parsing
   const results = await searchWikipediaEvents(eventName, 10);
   
